@@ -85,7 +85,7 @@ public class InventoryResource {
 
     // tag::updateStatus[]
     // tag::systemLoad[]
-    @Incoming("systemLoad")
+    //@Incoming("systemLoad")
     // end::systemLoad[]
     public void updateStatus(SystemLoad sl)  {
         String hostname = sl.hostname;
