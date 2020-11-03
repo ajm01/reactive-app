@@ -30,6 +30,8 @@ import org.microshed.testing.SharedContainerConfig;
 import org.microshed.testing.jaxrs.RESTClient;
 import org.microshed.testing.jupiter.MicroShedTest;
 import org.microshed.testing.kafka.KafkaProducerClient;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.Producer;
 
 import io.openliberty.guides.inventory.InventoryResource;
 import io.openliberty.guides.models.SystemLoad;
@@ -43,8 +45,8 @@ public class InventoryServiceIT {
     @RESTClient
     public static InventoryResource inventoryResource;
 
-    @KafkaProducerClient(valueSerializer = SystemLoadSerializer.class)
-    public static KafkaProducer<String, SystemLoad> producer;
+    //@KafkaProducerClient(valueSerializer = SystemLoadSerializer.class)
+    //public static KafkaProducer<String, SystemLoad> producer;
 
     @AfterAll
     public static void cleanup() {
@@ -53,6 +55,13 @@ public class InventoryServiceIT {
 
     @Test
     public void testCpuUsage() throws InterruptedException {
+       Properties props = new Properties();
+       props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-cluster-kafka-bootstrap.reactive.svc:9092");
+       props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "io.openliberty.guides.models.SystemLoad$SystemLoadSerializer");
+       props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+
+       Producer<String, SystemLoad> producer = new KafkaProducer<String, SystemLoad>(props);
+
         SystemLoad sl = new SystemLoad("localhost", 1.1);
         producer.send(new ProducerRecord<String, SystemLoad>("systemLoadTopic", sl));
         Thread.sleep(5000);

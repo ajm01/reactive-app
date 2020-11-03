@@ -46,7 +46,7 @@ public class SystemService {
 
     // tag::sendSystemLoad[]
     // tag::publishSystemLoad[]
-    @Outgoing("systemLoad")
+    @Outgoing("systemLoadOutgoing")
     // end::publishSystemLoad[]
     public Publisher<SystemLoad> sendSystemLoad() {
         // tag::flowableInterval[]

@@ -83,6 +83,19 @@
             <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+    <groupId>javax.json.bind</groupId>
+    <artifactId>javax.json.bind-api</artifactId>
+    <version>1.0</version>
+    <scope>compile</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.glassfish</groupId>
+    <artifactId>javax.json</artifactId>
+    <version>1.1</version>
+    <scope>compile</scope>
+</dependency>
     </dependencies>
 
     <build>
