@@ -32,6 +32,9 @@ import org.microshed.testing.jupiter.MicroShedTest;
 import org.microshed.testing.kafka.KafkaProducerClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.Producer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 
 import io.openliberty.guides.inventory.InventoryResource;
 import io.openliberty.guides.models.SystemLoad;
@@ -62,7 +65,14 @@ public class InventoryServiceIT {
 
        Producer<String, SystemLoad> producer = new KafkaProducer<String, SystemLoad>(props);
 
-        SystemLoad sl = new SystemLoad("localhost", 1.1);
+        //SystemLoad sl = new SystemLoad("localhost", 1.1);
+		SystemLoad sl;
+		try {
+			sl = new SystemLoad(InetAddress.getLocalHost().getHostName(), 1.1);
+		} catch (UnknownHostException e) {
+				sl = null;
+                Assertions.fail("host name not resolvable - fail");
+        }
         producer.send(new ProducerRecord<String, SystemLoad>("systemLoadTopic", sl));
         Thread.sleep(5000);
         Response response = inventoryResource.getSystems();
@@ -70,6 +80,7 @@ public class InventoryServiceIT {
                 response.readEntity(new GenericType<List<Properties>>() {});
         Assertions.assertEquals(200, response.getStatus(),
                 "Response should be 200");
+		System.out.println("AJM: system size is: " + systems.size());
         Assertions.assertEquals(systems.size(), 1);
         for (Properties system : systems) {
             Assertions.assertEquals(sl.hostname, system.get("hostname"),
