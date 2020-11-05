@@ -36,6 +36,8 @@ import org.apache.kafka.clients.producer.Producer;
 import io.openliberty.guides.inventory.InventoryResource;
 import io.openliberty.guides.models.SystemLoad;
 import io.openliberty.guides.models.SystemLoad.SystemLoadSerializer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @MicroShedTest
 @SharedContainerConfig(AppContainerConfig.class)
@@ -62,7 +64,15 @@ public class InventoryServiceIT {
 
        Producer<String, SystemLoad> producer = new KafkaProducer<String, SystemLoad>(props);
 
-        SystemLoad sl = new SystemLoad("localhost", 1.1);
+        //SystemLoad sl = new SystemLoad("localhosti-ajm", 1.1);
+		SystemLoad sl;
+		try {
+			sl = new SystemLoad(InetAddress.getLocalHost().getHostName(), 1.1);
+		} catch (UnknownHostException e) {
+				sl = null;
+                Assertions.fail("host name not resolvable - fail");
+        }
+		
         producer.send(new ProducerRecord<String, SystemLoad>("systemLoadTopic", sl));
         Thread.sleep(5000);
         Response response = inventoryResource.getSystems();

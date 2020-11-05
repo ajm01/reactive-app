@@ -50,6 +50,8 @@ public class SystemService {
     // end::publishSystemLoad[]
     public Publisher<SystemLoad> sendSystemLoad() {
         // tag::flowableInterval[]
+		System.out.println("AJM: sending the system load numbers to kafka?");
+		System.out.println("AJM: classloader -> " +this.getClass().toString());
         return Flowable.interval(15, TimeUnit.SECONDS)
                 .map((interval -> new SystemLoad(getHostname(),
                         new Double(osMean.getSystemLoadAverage()))));
